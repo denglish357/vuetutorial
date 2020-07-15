@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .red{
+            border: 2px solid red;
+        }
+        .green{
+            border: 2px solid green;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+  <!--
+      V-MODEL AND DISPLAYING DATA
+        <h1>
+        {{ greeting }}
+    </h1>
+
+    <input type="text" v-model="greeting">
+
+    -->
+<!--  v-IF AND ELSE STATEMENTS 
+    IF THESE ARE NOT TRUE THE DIV DOES NOT GET RENDERED TO THE DOME
+
+    <div v-if="count === 1">
+            count equaled one
+    </div>
+    <div v-else-if="count === 2">
+        count equaled equaled two
+</div>
+<div v-else="count === 1">
+    count equaled three
+</div>
+-->
+<!-- vue show
+    if its not true the div does not get rendered to the dome
+
+<div v-show="count === 1">
+    count equaled one
+</div>
+-->
+
+<!-- bind attributes and css classes 
+
+    Sign up
+    <br>
+    <input type="text" v-model="email">
+    <br>
+    <button onclick="alert('signed up')" v-bind:disabled="email.length < 2">Submit</button>
+
+<br>
+<br>
+Sign up
+    <br>
+    <input type="text" v-model="email"  :class="[email.length < 2 ? 'green' : 'red']">
+    <br>
+    <button onclick="alert('signed up')">Submit</button>
+
+    -->
+
+    <!-- V-text does the same thing as using double curly brackets  
+    Sign up
+    <br>
+    <br>
+    <input type="text" v-model="email">
+    <br>
+    <br>
+    <button onclick="alert='signed up'">Submit</button>
+    <p v-text="email"></p>
+    We can also use v-html which parses it as html
+    <p v-html></p>
+    V-once renders something only one time as static html
+    as you update it. It wont change from what is was initially
+    -->
+
+    <!-- Looping in vue -->
+
+<!--
+
+    YOU CAN DO IT WITH AN ARRAY 
+
+
+    <div id="loop">
+        <ul>
+            <li v-for="cat in cats">{{ cat }}</li>
+        </ul>
+    </div>
+-->
+
+<!-- You can also do it with items
+    <div class="loop">
+        <ul>
+            <li v-for="cat in cats">{{cat.name}}</li>
+        </ul>
+    </div>
+
+-->
+
+<!-- Functions -
+
+<div id="app">
+    <input type="text" v-model="newCat">
+    <br><br>
+    <button v-on:click="addKitty">+ ADD</button>
+    <ul>
+        <li v-for="cat in cats">{{cat.name}}</li>
+    </ul>
+</div>
+
+
+
+You can clear it by adding this.newCat = '' within the method
+the shorthand for v-on:click is @click
+
+<div id="app">
+    <input type="text" v-model="newCat" v-on:keyup.enter="addKitty">
+    <br><br>
+    <button v-on:click="addKitty">+ Addd</button>
+    <ul>
+        <li v-for="cat in cats">{{cat.name}}</li>
+    </ul>
+</div>
+
+<div id="app">
+    <input type="text" v-model="newCat" @keyup.enter="addKitty">
+    <br><br>
+    <button @click="addKitty">+ Addd</button>
+    <ul>
+        <li v-for="cat in cats">{{ cat.name | capitalize | kittify }}</li>
+    </ul>
+</div>
+-->
+
+<!--   Computed -
+
+<div id="app">
+    {{ kittifyName }}
+    <br>
+    <br>
+    <input type="text" v-model="newCat" @keyup.enter="addKitty">
+    <br><br>
+    <button @click="addKitty">+ Addd</button>
+    <ul>
+        <li v-for="cat in cats">{{ cat.name }}</li>
+    </ul>
+</div>
+
+--> 
+
+<!-- adding custom components-
+
+<div id="app">
+    <cat-list />
+</div>
+
+--> 
+
+<!-- adding logic and variables to the components through props-->
+
+<div id="id">
+    <cat-list v-bind:cats="cats"></cat-list>
+</div>
+
+
+</div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    Vue.component( 'cat-list',
+        {
+            props: ['cats'],
+            template: '<ul><li v-for="cat in cats">{{ cat.name }}</li></ul>'
+        }
+    )
+
+var app = new Vue({
+  el: '#app',
+  component: [
+      'cat-list'
+  ],
+  data: {
+    message: 'Hello Vue!',
+    greeting: 'This is the greeting',
+    count: 2,
+    email: '',
+    cats: [
+       { name: 'kitty'},
+        { name: 'whiskers'},
+        { name: 'coco'},
+        { name: 'mimi'}
+    ],
+    newCat: "",
+  },
+  methods:{
+      addKitty: function () {
+          /*return*/ this.cats.push({name: this.newCat})
+          // THIS WILL CLEAR THE INPUT BOX
+          this.newCat = ''
+      }
+  },
+      // FILTERS ARE SIMULAR TO METHODS ITS AN OBJECT OF METHODS
+      filters: {
+          capitalize: function (value) {
+            return value.toUpperCase()
+          },
+      kittify (value){
+          return value + 'y'
+      }
+      },
+      computed: {
+          kittifyName () {
+              if (this.newCat.length > 1) {
+                return this.newCat + 'y'
+              }
+          }
+      },
+      created: function () {
+          console.log('created');
+      },
+      mounted: function () {
+          console.log('mounted');
+      },
+      updated: function () {
+          console.log('updated');
+      },
+      destroyed: function () {
+          console.log('destroyed');
+      }
+  
+})
+</script>
+</body>
