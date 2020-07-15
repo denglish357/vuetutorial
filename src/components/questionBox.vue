@@ -3,45 +3,108 @@
         <div>
             <b-jumbotron>
                 <template v-slot:lead>
-         {{ currentQuestion.question }}
-</template>
-
-    <hr class="my-4">
-
-
-    <b-list-group>
-  <b-list-group-item v-for="(answer, index) in answers" :key="index" @lick="selectAnswer(index)">
-  {{answer}}
-  </b-list-group-item >
-</b-list-group>
-    
-    <b-button variant="primary" href="#">Submit</b-button>
-    <b-button variant="success" href="#" @click="next">Next</b-button>
-  </b-jumbotron>
-</div>
+                    {{ currentQuestion.question }}
+                    <hr class="my-4">            
+                    <b-list-group>
+                        <b-list-group-item 
+                        v-for="(answer, index) in answers" 
+                        :key="index"
+                         @click="selectAnswer(index)"
+                         v-bind:class="answerClass(index)/*[ 
+                        !answered && selectedIndex === index  ? 'selected' : 
+                         answered && correctIndex === index ? 'correct' :
+                         answered && selectedIndex == index && correctIndex !== index ? 'incorrect' : ''
+                         ]*/">
+                        {{answer}}
+                        </b-list-group-item >
+                    </b-list-group>
+                    <b-button 
+                    variant="primary"
+                    v-on:click="submitAnswer"
+                    :disabled="selectedIndex === null || answered"
+                    >
+                    Submit
+                    </b-button>
+                    <b-button variant="success" href="#" @click="next">Next</b-button>
+                </template>
+            </b-jumbotron>
+        </div>
     </div>
 </template>
 
 
 <script>
+import _ from 'lodash'
+
 export default {
     props: {
         currentQuestion: Object,
-        next: Function
+        next: Function,
+        increment: Function
+    },
+    data () {
+        return {
+            selectedIndex: null,
+            correctIndex: this.currentQuestion.correct_answer,
+            shuffledAnswers : [],
+            answered: false
+        }
     },
     computed: {
         answers() {
             let answers = [...this.currentQuestion.incorrect_answers]
-            answers.push(this.currentQuestion.corrrect_answer)
+            answers.push(this.currentQuestion.correct_answer)      
             return answers
         }
     },
+    watch: {
+        currentQuestion: {
+            immediate: true,
+            handler () {
+            this.selectedIndex = null
+            this.answered = false
+            this.shuffleAnswers()
+            }
+        }
+
+    },
     methods: {
         selectAnswer(index) {
-            console.log(index);
+            this.selectedIndex = index;
+        },
+        submitAnswer(){
+            let isCorrect = false
+            if (this.selectedIndex === this.correctIndex) {
+                isCorrect = true
+            }
+            this.answered = true
+            this.increment(isCorrect)
+        },
+        shuffleAnswers () {
+            let answers = [...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer]
+            this.shuffledAnswers = _.shuffle(answers);
+            this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer)
+        },
+        answerClass (index) {
+            let answerClass = ''
+
+            if(!this.answered && this.selectedIndex === index){
+                answerClass = 'selected'
+            } else if (this.answered && this.correctIndex === index) {
+                answerClass = 'correct'
+            } else if (this.answered && this.selectedIndex == index && this.correctIndex !== index) {
+                answerClass = 'incorrect'
+            }
+        return answerClass
         }
     }
 }
+
+
+                         
+                         
+                         
+
 </script>
 
 
@@ -49,8 +112,20 @@ export default {
 .list-group {
     margin-bottom: 15px;
 }
-
+.list-group-item:hover {
+    background: #eee;
+    cursor: pointer;
+}
 .btn {
     margin: 0 5px;
+}
+.selected{
+    background-color: lightblue;
+}
+.correct{
+    background-color: lightgreen;
+}
+.incorrect{
+    background-color: red;
 }
 </style>
